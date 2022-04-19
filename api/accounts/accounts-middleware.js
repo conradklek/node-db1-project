@@ -29,6 +29,7 @@ exports.checkAccountPayload = async (req, res, next) => {
       res.status(400).json({ message: "budget of account is too large or too small" });
       next(error);
     }
+    next();
   } catch (err) {
     next(err);
   }
@@ -52,8 +53,13 @@ exports.checkAccountNameUnique = async (req, res, next) => {
 exports.checkAccountId = async (req, res, next) => {
   try{
     const account = await Account.getById(req.params.id);
-    if(account.length === 0){
-      res.status(404).json({message: "Account not found"})
+    if(!account) {
+      const error = { status: 404, message: "account not found" }
+      res.status(404).json(error);
+      next();
+    } else {
+      req.account = account;
+      next();
     }
     next()
   } catch(err){
