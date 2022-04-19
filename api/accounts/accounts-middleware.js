@@ -1,3 +1,5 @@
+const db = require('../../data/db-config')
+
 const Account = require("./accounts-model");
 
 exports.checkAccountPayload = async (req, res, next) => {
@@ -30,20 +32,21 @@ exports.checkAccountPayload = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-  next()
 }
 
 exports.checkAccountNameUnique = async (req, res, next) => {
   try {
-    const account = await Account.getByName(req.body.name);
-    if (account.length > 0) {
-      res.status(400).json({ message: "Account name already exists" });
+    const existing = await db('accounts').where('name', req.body.name.trim()).first();
+    if (existing) {
+      const error = { status: 400, message: "that name is taken" }
+      next(error)
+    } else {
+      next()
     }
     next();
   } catch (err) {
     next(err);
   }
-  next()
 }
 
 exports.checkAccountId = async (req, res, next) => {
@@ -56,5 +59,4 @@ exports.checkAccountId = async (req, res, next) => {
   } catch(err){
     next(err)
   }
-  next()
 }

@@ -5,19 +5,20 @@ const getAll = () => {
 }
 
 const getById = id => {
-  return db('accounts').where({ id })
+  return db('accounts').where('id', id).first()
 }
 
-const create = account => {
-  return db('accounts').insert(account, 'id')
+const create = async account => {
+  const [id] = await db('accounts').insert(account)
+  return getById(id)
 }
 
 const updateById = (id, account) => {
-  return db('accounts').where({ id }).update(account)
+  return db('accounts').where('id', id).update(account)
 }
 
 const deleteById = id => {
-  return db('accounts').where({ id }).del()
+  return db('accounts').where('id', id).del()
 }
 
 module.exports = {
