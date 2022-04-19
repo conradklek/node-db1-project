@@ -1,11 +1,32 @@
 const Account = require("./accounts-model");
 
 exports.checkAccountPayload = async (req, res, next) => {
+  const error = { status: 400 }
   try {
-    if (!req.body.name) {
-      res.status(400).json({ message: "Missing name" });
+    if (!req.body.name ) {
+      res.status(400).json({ message: "name and budget are required" });
+      next(error);
+    } else
+    if (!req.body.budget) {
+      res.status(400).json({ message: "name and budget are required" });
+      next(error);
+    } else
+    if (typeof req.body.name !== "string") {
+      res.status(400).json({ message: "name of account must be a string" });
+      next(error);
+    } else
+    if (req.body.name.trim().length < 3 || req.body.name.trim().length > 100) {
+      res.status(400).json({ message: "name of account must be between 3 and 100" });
+      next(error);
+    } else
+    if (typeof req.body.budget !== "number" || isNaN(req.body.budget)) {
+      res.status(400).json({ message: "budget of account must be a number" });
+      next(error);
+    } else
+    if (req.body.budget < 0 || req.body.budget > 1000000) {
+      res.status(400).json({ message: "budget of account is too large or too small" });
+      next(error);
     }
-    next();
   } catch (err) {
     next(err);
   }
