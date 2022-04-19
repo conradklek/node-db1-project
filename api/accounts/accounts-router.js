@@ -49,12 +49,8 @@ router.delete("/:id", md.checkAccountId, async (req, res, next) => {
   }
 });
 
-router.use((err, req, res, next) => {
-  try {
-    throw new Error("argh");
-  } catch (err) {
-    next(err);
-  }
+router.use((err, req, res) => {
+  res.status(err.status || 500).json({ message: err.message });
 });
 
 module.exports = router;
